@@ -36,4 +36,4 @@ const firebaseProvider = {
   providers: [firebaseProvider, FirebaseNotifications],
   exports: [FirebaseNotifications],
 })
-export class FirebaseModule { }
+export class FirebaseModule {}

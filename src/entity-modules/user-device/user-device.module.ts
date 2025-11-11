@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { NotificationsController } from 'src/business-modules/notifications/nofitications.controller';
 import { UserDeviceRepository } from './user-device.repository';
 
 @Module({
@@ -8,4 +7,4 @@ import { UserDeviceRepository } from './user-device.repository';
   providers: [UserDeviceRepository],
   exports: [UserDeviceRepository],
 })
-export class UserDeviceModule { }
+export class UserDeviceModule {}

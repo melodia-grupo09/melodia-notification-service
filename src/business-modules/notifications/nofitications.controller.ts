@@ -13,6 +13,7 @@ import { AddDeviceUseCase } from './use-cases/add-device.use-case';
 import { SendNotificationToUserPayloadDTO } from './dtos/send-notification.dto';
 import { RemoveDeviceUseCase } from './use-cases/remove-device.use-case';
 import { SendNotificationToUserUseCase } from './use-cases/send-notification.use-case';
+import { SendTestNotificationUseCase } from './use-cases/test-notification.use-case';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -20,6 +21,7 @@ export class NotificationsController {
     private readonly addDeviceUseCase: AddDeviceUseCase,
     private readonly removeDeviceUseCase: RemoveDeviceUseCase,
     private readonly sendNotificationToUserUseCase: SendNotificationToUserUseCase,
+    private readonly sendTestNotificationUseCase: SendTestNotificationUseCase,
   ) {}
 
   @Post('device')
@@ -46,5 +48,16 @@ export class NotificationsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async sendNotification(@Body() body: SendNotificationToUserPayloadDTO) {
     return this.sendNotificationToUserUseCase.execute(body);
+  }
+
+  @Post('test/:deviceToken')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({
+    name: 'deviceToken',
+    type: 'string',
+    description: 'The device token to send the test notification to',
+  })
+  async sendTestNotification(@Param('deviceToken') deviceToken: string) {
+    return this.sendTestNotificationUseCase.execute(deviceToken);
   }
 }

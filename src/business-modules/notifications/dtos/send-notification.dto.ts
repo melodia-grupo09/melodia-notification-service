@@ -24,6 +24,29 @@ export class SendNotificationToUserPayloadDTO {
   body: string;
 }
 
+export class SendNotificationToUsersBatchPayloadDTO {
+  @ApiProperty({
+    type: [String],
+    description: 'The IDs of the users to whom the notification will be sent',
+  })
+  @IsString({ each: true })
+  userIds: string[];
+
+  @ApiProperty({
+    type: String,
+    description: 'The title of the notification',
+  })
+  @IsString()
+  title: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The body of the notification',
+  })
+  @IsString()
+  body: string;
+}
+
 export class SendNotificationToTopicPayloadDTO {
   @ApiProperty({
     type: String,

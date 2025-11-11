@@ -10,6 +10,19 @@ import {
 export class FirebaseNotifications {
   constructor(@Inject('FIREBASE_APP') private readonly firebaseApp: app.App) {}
 
+  async sendToDevice(
+    deviceToken: string,
+    payload: { notification?: Notification; data?: Record<string, string> },
+  ): Promise<string> {
+    const message: Message = {
+      token: deviceToken,
+      notification: payload.notification,
+      data: payload.data,
+    };
+
+    return this.firebaseApp.messaging().send(message);
+  }
+
   // Implements batching internally, because firebase supports max 500 tokens per request
   // Returns a set of tokens that caused errors
   async sendToDevices(

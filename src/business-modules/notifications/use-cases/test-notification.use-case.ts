@@ -16,6 +16,6 @@ export class SendTestNotificationUseCase {
         body: 'This is a test notification',
       },
     };
-    await this.firebaseNotifications.sendToDevices([deviceToken], payload);
+    await this.firebaseNotifications.sendToDevice(deviceToken, payload);
   }
 }

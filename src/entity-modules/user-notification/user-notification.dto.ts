@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntityDTO } from '../base.dto';
-import { IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 
 export class UserNotificationDTO extends BaseEntityDTO {
   @ApiProperty({
@@ -16,6 +16,14 @@ export class UserNotificationDTO extends BaseEntityDTO {
   })
   @IsString()
   message: string;
+
+  @ApiProperty({
+    description: 'Data payload associated with the notification',
+    type: Object,
+  })
+  @IsOptional()
+  @IsObject()
+  data: Record<string, any> | null;
 
   @ApiProperty({
     description: 'ID of the user to whom the notification is sent',

@@ -5,7 +5,7 @@ import { UserNotificationRepository } from './user-notification.repository';
 @Entity({ repository: () => UserNotificationRepository })
 export class UserNotification extends BaseEntity<
   UserNotification,
-  'createdAt' | 'updatedAt'
+  'createdAt' | 'updatedAt' | 'data'
 > {
   [EntityRepositoryType]: UserNotificationRepository;
 
@@ -14,6 +14,9 @@ export class UserNotification extends BaseEntity<
 
   @Property({ type: 'string', nullable: false })
   message: string;
+
+  @Property({ type: 'json', default: null, nullable: true })
+  data: Record<string, any> | null = null;
 
   @Property({ type: 'string', nullable: false })
   @Index()

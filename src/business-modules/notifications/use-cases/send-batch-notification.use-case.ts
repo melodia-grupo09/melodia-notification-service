@@ -31,6 +31,7 @@ export class SendNotificationToUsersBatchUseCase {
       this.userNotificationRepository.create({
         title,
         message: body,
+        data: notification.data,
         userId,
       });
     }

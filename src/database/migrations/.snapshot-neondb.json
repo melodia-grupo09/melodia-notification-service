@@ -155,6 +155,16 @@
           "length": 255,
           "mappedType": "string"
         },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "default": "null",
+          "mappedType": "json"
+        },
         "user_id": {
           "name": "user_id",
           "type": "varchar(255)",

@@ -35,6 +35,7 @@ export class SendNotificationToUserUseCase {
     this.userNotificationRepository.create({
       title,
       message: body,
+      data: notificationDto.data,
       userId,
     });
     await this.userNotificationRepository.getEntityManager().flush();

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsDate, IsString } from 'class-validator';
 import type { UUID } from 'crypto';
 
@@ -17,6 +18,7 @@ export class BaseEntityDTO {
     description: 'Date when the entity was created',
   })
   @IsDate()
+  @Type(() => Date)
   createdAt: Date;
 
   @ApiProperty({
@@ -25,5 +27,6 @@ export class BaseEntityDTO {
     description: 'Date when the entity was last updated',
   })
   @IsDate()
+  @Type(() => Date)
   updatedAt: Date;
 }

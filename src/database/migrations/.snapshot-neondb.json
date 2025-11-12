@@ -17,23 +17,23 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "date",
+          "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
-          "mappedType": "date"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "date",
+          "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
-          "mappedType": "date"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "device_token": {
           "name": "device_token",
@@ -117,23 +117,23 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "date",
+          "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
-          "mappedType": "date"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "date",
+          "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 0,
-          "mappedType": "date"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "title": {
           "name": "title",

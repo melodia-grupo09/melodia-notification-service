@@ -13,10 +13,10 @@ export abstract class BaseEntity<
   @PrimaryKey({ type: 'uuid' })
   id = randomUUID();
 
-  @Property({ type: 'date' })
+  @Property({ type: 'datetime' })
   createdAt = new Date();
 
-  @Property({ type: 'date', onUpdate: () => new Date() })
+  @Property({ type: 'datetime', onUpdate: () => new Date() })
   updatedAt = new Date();
 
   toDTO<Dto extends object>(dtoClass: ClassCtor<Dto>): Dto {

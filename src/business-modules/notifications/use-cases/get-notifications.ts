@@ -19,6 +19,9 @@ export class GetUserNotificationsUseCase {
       {
         limit,
         offset,
+        orderBy: {
+          createdAt: 'DESC',
+        },
       },
     );
     return notifications.map((notification) =>

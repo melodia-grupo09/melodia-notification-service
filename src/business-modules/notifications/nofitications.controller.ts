@@ -10,7 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { AddDevicePayloadDTO } from './dtos/add-device.dto';
 import { AddDeviceUseCase } from './use-cases/add-device.use-case';
 import {
@@ -22,6 +22,7 @@ import { SendNotificationToUserUseCase } from './use-cases/send-notification.use
 import { SendTestNotificationUseCase } from './use-cases/test-notification.use-case';
 import { SendNotificationToUsersBatchUseCase } from './use-cases/send-batch-notification.use-case';
 import { GetUserNotificationsUseCase } from './use-cases/get-notifications';
+import { UserNotificationDTO } from 'src/entity-modules/user-notification/user-notification.dto';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -40,6 +41,11 @@ export class NotificationsController {
     type: 'string',
     description: 'The ID of the user to retrieve devices for',
   })
+  @ApiResponse({
+    status: 200,
+    description: 'List of user notifications',
+    type: [UserNotificationDTO],
+  })
   @ApiQuery({
     name: 'limit',
     type: 'number',
@@ -52,7 +58,7 @@ export class NotificationsController {
     required: false,
     description: 'Page number for pagination (default is 1)',
   })
-  async getUserDevices(
+  async getUserNotifications(
     @Param('userId') userId: string,
     @Query('limit', new DefaultValuePipe(20)) limit: number,
     @Query('page', new DefaultValuePipe(1)) page: number,

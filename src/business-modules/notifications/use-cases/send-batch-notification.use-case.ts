@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UserDeviceRepository } from 'src/entity-modules/user-device/user-device.repository';
 import { SendNotificationToUsersBatchPayloadDTO } from '../dtos/send-notification.dto';
 import { FirebaseNotifications } from 'src/tools-modules/firebase/firebase.notifications';
+import { UserNotificationRepository } from 'src/entity-modules/user-notification/user-notification.repository';
 
 @Injectable()
 export class SendNotificationToUsersBatchUseCase {
   constructor(
     private readonly userDeviceRepository: UserDeviceRepository,
+    private readonly userNotificationRepository: UserNotificationRepository,
     private readonly firebaseNotifications: FirebaseNotifications,
   ) {}
 
@@ -23,6 +25,14 @@ export class SendNotificationToUsersBatchUseCase {
 
     if (deviceTokens.length === 0) {
       return;
+    }
+
+    for (const userId of userIds) {
+      this.userNotificationRepository.create({
+        title,
+        message: body,
+        userId,
+      });
     }
 
     const payload = {

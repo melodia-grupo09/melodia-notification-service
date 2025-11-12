@@ -7,11 +7,14 @@ import { SendNotificationToUserUseCase } from './use-cases/send-notification.use
 import { UserDeviceModule } from 'src/entity-modules/user-device/user-device.module';
 import { SendTestNotificationUseCase } from './use-cases/test-notification.use-case';
 import { SendNotificationToUsersBatchUseCase } from './use-cases/send-batch-notification.use-case';
+import { UserNotificationModule } from 'src/entity-modules/user-notification/user-notification.module';
+import { GetUserNotificationsUseCase } from './use-cases/get-notifications';
 
 @Module({
-  imports: [FirebaseModule, UserDeviceModule],
+  imports: [FirebaseModule, UserDeviceModule, UserNotificationModule],
   controllers: [NotificationsController],
   providers: [
+    GetUserNotificationsUseCase,
     AddDeviceUseCase,
     RemoveDeviceUseCase,
     SendNotificationToUserUseCase,

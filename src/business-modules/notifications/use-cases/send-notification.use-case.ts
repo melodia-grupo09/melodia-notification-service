@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { UserDeviceRepository } from 'src/entity-modules/user-device/user-device.repository';
 import { SendNotificationToUserPayloadDTO } from '../dtos/send-notification.dto';
 import { FirebaseNotifications } from 'src/tools-modules/firebase/firebase.notifications';
+import { UserNotificationRepository } from 'src/entity-modules/user-notification/user-notification.repository';
 
 @Injectable()
 export class SendNotificationToUserUseCase {
   constructor(
     private readonly userDeviceRepository: UserDeviceRepository,
+    private readonly userNotificationRepository: UserNotificationRepository,
     private readonly firebaseNotifications: FirebaseNotifications,
   ) {}
 
-  async execute(notification: SendNotificationToUserPayloadDTO): Promise<void> {
-    const { userId, title, body } = notification;
+  async execute(
+    notificationDto: SendNotificationToUserPayloadDTO,
+  ): Promise<void> {
+    const { userId, title, body } = notificationDto;
 
     // Get devices for user
     const userDevices = await this.userDeviceRepository.find({ userId });
@@ -27,6 +31,14 @@ export class SendNotificationToUserUseCase {
         body,
       },
     };
+
+    this.userNotificationRepository.create({
+      title,
+      message: body,
+      userId,
+    });
+    await this.userNotificationRepository.getEntityManager().flush();
+
     const tokensWithErrors = await this.firebaseNotifications.sendToDevices(
       deviceTokens,
       payload,

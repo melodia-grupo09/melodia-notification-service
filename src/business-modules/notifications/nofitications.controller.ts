@@ -1,13 +1,16 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
-import { ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { AddDevicePayloadDTO } from './dtos/add-device.dto';
 import { AddDeviceUseCase } from './use-cases/add-device.use-case';
 import {
@@ -18,16 +21,44 @@ import { RemoveDeviceUseCase } from './use-cases/remove-device.use-case';
 import { SendNotificationToUserUseCase } from './use-cases/send-notification.use-case';
 import { SendTestNotificationUseCase } from './use-cases/test-notification.use-case';
 import { SendNotificationToUsersBatchUseCase } from './use-cases/send-batch-notification.use-case';
+import { GetUserNotificationsUseCase } from './use-cases/get-notifications';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(
+    private readonly getUserNotificationsUseCase: GetUserNotificationsUseCase,
     private readonly addDeviceUseCase: AddDeviceUseCase,
     private readonly removeDeviceUseCase: RemoveDeviceUseCase,
     private readonly sendNotificationToUserUseCase: SendNotificationToUserUseCase,
     private readonly sendNotificationToUsersBatchUseCase: SendNotificationToUsersBatchUseCase,
     private readonly sendTestNotificationUseCase: SendTestNotificationUseCase,
   ) {}
+
+  @Get(':userId')
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    description: 'The ID of the user to retrieve devices for',
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    required: false,
+    description: 'Number of notifications to retrieve (default is 20)',
+  })
+  @ApiQuery({
+    name: 'page',
+    type: 'number',
+    required: false,
+    description: 'Page number for pagination (default is 1)',
+  })
+  async getUserDevices(
+    @Param('userId') userId: string,
+    @Query('limit', new DefaultValuePipe(20)) limit: number,
+    @Query('page', new DefaultValuePipe(1)) page: number,
+  ) {
+    return this.getUserNotificationsUseCase.execute(userId, limit, page);
+  }
 
   @Post('device')
   @ApiBody({

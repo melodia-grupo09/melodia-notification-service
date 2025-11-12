@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -23,6 +24,9 @@ import { SendTestNotificationUseCase } from './use-cases/test-notification.use-c
 import { SendNotificationToUsersBatchUseCase } from './use-cases/send-batch-notification.use-case';
 import { GetUserNotificationsUseCase } from './use-cases/get-notifications';
 import { UserNotificationDTO } from 'src/entity-modules/user-notification/user-notification.dto';
+import { DeleteNotificationUseCase } from './use-cases/delete-notitication.use-case';
+import { ClearNotificationsUseCase } from './use-cases/clear-notifications.use-case';
+import type { UUID } from 'crypto';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -30,6 +34,8 @@ export class NotificationsController {
     private readonly getUserNotificationsUseCase: GetUserNotificationsUseCase,
     private readonly addDeviceUseCase: AddDeviceUseCase,
     private readonly removeDeviceUseCase: RemoveDeviceUseCase,
+    private readonly deleteNotificationUseCase: DeleteNotificationUseCase,
+    private readonly clearNotificationsUseCase: ClearNotificationsUseCase,
     private readonly sendNotificationToUserUseCase: SendNotificationToUserUseCase,
     private readonly sendNotificationToUsersBatchUseCase: SendNotificationToUsersBatchUseCase,
     private readonly sendTestNotificationUseCase: SendTestNotificationUseCase,
@@ -117,5 +123,29 @@ export class NotificationsController {
   })
   async sendTestNotification(@Param('deviceToken') deviceToken: string) {
     return this.sendTestNotificationUseCase.execute(deviceToken);
+  }
+
+  @Delete('delete/:notificationId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({
+    name: 'notificationId',
+    type: 'string',
+    description: 'The ID of the notification to be deleted',
+  })
+  async deleteNotification(
+    @Param('notificationId', ParseUUIDPipe) notificationId: UUID,
+  ) {
+    return this.deleteNotificationUseCase.execute(notificationId);
+  }
+
+  @Delete('clear/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    description: 'The ID of the user whose notifications are to be cleared',
+  })
+  async clearNotifications(@Param('userId') userId: string) {
+    return this.clearNotificationsUseCase.execute(userId);
   }
 }

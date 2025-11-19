@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserDeviceRepository } from 'src/entity-modules/user-device/user-device.repository';
 import { SendNotificationToUsersBatchPayloadDTO } from '../dtos/send-notification.dto';
 import { FirebaseNotifications } from 'src/tools-modules/firebase/firebase.notifications';
@@ -7,6 +7,7 @@ import { UserNotificationRepository } from 'src/entity-modules/user-notification
 @Injectable()
 export class SendNotificationToUsersBatchUseCase {
   constructor(
+    private readonly logger: Logger,
     private readonly userDeviceRepository: UserDeviceRepository,
     private readonly userNotificationRepository: UserNotificationRepository,
     private readonly firebaseNotifications: FirebaseNotifications,
@@ -17,6 +18,17 @@ export class SendNotificationToUsersBatchUseCase {
   ): Promise<void> {
     const { userIds, title, body } = notification;
 
+    for (const userId of userIds) {
+      this.userNotificationRepository.create({
+        title,
+        message: body,
+        data: notification.data,
+        userId,
+      });
+    }
+    await this.userNotificationRepository.getEntityManager().flush();
+    this.logger.log(`Created notifications for users: ${userIds.join(', ')}`);
+
     // Get devices for users
     const userDevices = await this.userDeviceRepository.find({
       userId: { $in: userIds },
@@ -25,15 +37,6 @@ export class SendNotificationToUsersBatchUseCase {
 
     if (deviceTokens.length === 0) {
       return;
-    }
-
-    for (const userId of userIds) {
-      this.userNotificationRepository.create({
-        title,
-        message: body,
-        data: notification.data,
-        userId,
-      });
     }
 
     const payload = {

@@ -21,6 +21,14 @@ export class SendNotificationToUserUseCase {
     const userDevices = await this.userDeviceRepository.find({ userId });
     const deviceTokens = userDevices.map((device) => device.deviceToken);
 
+    this.userNotificationRepository.create({
+      title,
+      message: body,
+      data: notificationDto.data,
+      userId,
+    });
+    await this.userNotificationRepository.getEntityManager().flush();
+
     if (deviceTokens.length === 0) {
       return;
     }
@@ -31,14 +39,6 @@ export class SendNotificationToUserUseCase {
         body,
       },
     };
-
-    this.userNotificationRepository.create({
-      title,
-      message: body,
-      data: notificationDto.data,
-      userId,
-    });
-    await this.userNotificationRepository.getEntityManager().flush();
 
     const tokensWithErrors = await this.firebaseNotifications.sendToDevices(
       deviceTokens,

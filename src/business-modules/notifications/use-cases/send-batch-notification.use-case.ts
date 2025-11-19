@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserDeviceRepository } from 'src/entity-modules/user-device/user-device.repository';
 import { SendNotificationToUsersBatchPayloadDTO } from '../dtos/send-notification.dto';
 import { FirebaseNotifications } from 'src/tools-modules/firebase/firebase.notifications';
@@ -7,7 +7,6 @@ import { UserNotificationRepository } from 'src/entity-modules/user-notification
 @Injectable()
 export class SendNotificationToUsersBatchUseCase {
   constructor(
-    private readonly logger: Logger,
     private readonly userDeviceRepository: UserDeviceRepository,
     private readonly userNotificationRepository: UserNotificationRepository,
     private readonly firebaseNotifications: FirebaseNotifications,
@@ -27,7 +26,6 @@ export class SendNotificationToUsersBatchUseCase {
       });
     }
     await this.userNotificationRepository.getEntityManager().flush();
-    this.logger.log(`Created notifications for users: ${userIds.join(', ')}`);
 
     // Get devices for users
     const userDevices = await this.userDeviceRepository.find({

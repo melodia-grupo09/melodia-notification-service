@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 
 export class SendNotificationToUserPayloadDTO {
   @ApiProperty({
@@ -28,6 +28,8 @@ export class SendNotificationToUserPayloadDTO {
     description: 'Additional data to include with the notification',
     required: false,
   })
+  @IsOptional()
+  @IsObject()
   data?: Record<string, any>;
 }
 
@@ -58,6 +60,8 @@ export class SendNotificationToUsersBatchPayloadDTO {
     description: 'Additional data to include with the notification',
     required: false,
   })
+  @IsOptional()
+  @IsObject()
   data?: Record<string, any>;
 }
 
@@ -82,4 +86,13 @@ export class SendNotificationToTopicPayloadDTO {
   })
   @IsString()
   body: string;
+
+  @ApiProperty({
+    type: Object,
+    description: 'Additional data to include with the notification',
+    required: false,
+  })
+  @IsOptional()
+  @IsObject()
+  data?: Record<string, any>;
 }

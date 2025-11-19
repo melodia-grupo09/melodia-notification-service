@@ -8,6 +8,18 @@ export class AddDeviceUseCase {
 
   async execute(addDevicePayload: AddDevicePayloadDTO): Promise<void> {
     const { userId, deviceToken } = addDevicePayload;
+    const existingDevice = await this.userDeviceRepository.findOne({
+      deviceToken,
+    });
+    if (existingDevice !== null && userId !== existingDevice.userId) {
+      this.userDeviceRepository.getEntityManager().remove(existingDevice);
+      await this.userDeviceRepository.getEntityManager().flush();
+    }
+
+    if (existingDevice !== null && userId === existingDevice.userId) {
+      return;
+    }
+
     this.userDeviceRepository.create({
       userId,
       deviceToken,

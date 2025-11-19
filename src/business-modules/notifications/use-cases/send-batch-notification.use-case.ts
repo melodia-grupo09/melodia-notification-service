@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserDeviceRepository } from 'src/entity-modules/user-device/user-device.repository';
 import { SendNotificationToUsersBatchPayloadDTO } from '../dtos/send-notification.dto';
 import { FirebaseNotifications } from 'src/tools-modules/firebase/firebase.notifications';
 import { UserNotificationRepository } from 'src/entity-modules/user-notification/user-notification.repository';
+import { UserDevice } from 'src/entity-modules/user-device/user-device.entity';
 
 @Injectable()
 export class SendNotificationToUsersBatchUseCase {
+  private readonly logger = new Logger(
+    SendNotificationToUsersBatchUseCase.name,
+  );
   constructor(
     private readonly userDeviceRepository: UserDeviceRepository,
     private readonly userNotificationRepository: UserNotificationRepository,
@@ -15,13 +19,13 @@ export class SendNotificationToUsersBatchUseCase {
   async execute(
     notification: SendNotificationToUsersBatchPayloadDTO,
   ): Promise<void> {
-    const { userIds, title, body } = notification;
+    const { userIds, title, body, data } = notification;
 
     for (const userId of userIds) {
       this.userNotificationRepository.create({
         title,
         message: body,
-        data: notification.data,
+        data: data,
         userId,
       });
     }
@@ -31,8 +35,28 @@ export class SendNotificationToUsersBatchUseCase {
     const userDevices = await this.userDeviceRepository.find({
       userId: { $in: userIds },
     });
-    const deviceTokens = userDevices.map((device) => device.deviceToken);
 
+    const devicesByUseId: Map<string, UserDevice[]> = new Map();
+    for (const device of userDevices) {
+      if (!devicesByUseId.has(device.userId)) {
+        devicesByUseId.set(device.userId, []);
+      }
+      devicesByUseId.get(device.userId)!.push(device);
+    }
+
+    for (const userId of userIds) {
+      if (!devicesByUseId.has(userId)) {
+        this.logger.warn(
+          `No devices found for user ${userId}. Notification not sent.`,
+        );
+      }
+    }
+
+    this.logger.log(
+      `Sending notification to ${userIds.length} users. Title: ${title}, Body: ${body}, data: ${JSON.stringify(data)}`,
+    );
+
+    const deviceTokens = userDevices.map((device) => device.deviceToken);
     if (deviceTokens.length === 0) {
       return;
     }
@@ -42,7 +66,7 @@ export class SendNotificationToUsersBatchUseCase {
         title,
         body,
       },
-      data: notification.data,
+      data,
     };
     const tokensWithErrors = await this.firebaseNotifications.sendToDevices(
       deviceTokens,

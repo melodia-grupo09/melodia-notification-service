@@ -42,6 +42,7 @@ export class SendNotificationToUsersBatchUseCase {
         title,
         body,
       },
+      data: notification.data,
     };
     const tokensWithErrors = await this.firebaseNotifications.sendToDevices(
       deviceTokens,

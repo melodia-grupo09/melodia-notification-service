@@ -38,6 +38,7 @@ export class SendNotificationToUserUseCase {
         title,
         body,
       },
+      data: notificationDto.data,
     };
 
     const tokensWithErrors = await this.firebaseNotifications.sendToDevices(
